@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>슬기 디데이</title>
+    <style>
+        @import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);    
+        html, body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Nanum Gothic', serif;
+        }
+        .d-day-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .d-day-wrapper.on-day {
+            background-color: #f7f7f7;
+            background-image: url("./pepe_kill.webp");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: auto 80%;
+        }
+
+        h1, h2 {
+            margin: 0;
+        }
+        h2 {
+            font-size: 45px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 40px;
+            font-weight: 600;
+        }
+
+        
+        .d-day-wrapper.on-day h2,
+        .d-day-wrapper.on-day h1 {
+            text-align: center;
+            text-decoration: underline;
+            font-size: 32px;
+            font-family: monospace;
+            font-weight: 900;
+            letter-spacing: 5px;
+
+            background: linear-gradient(to right, #6666ff, #0099ff , #00ff00, #ff3399, #6666ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: rainbow_animation 6s ease-in-out infinite;
+            background-size: 400% 100%;
+        }
+
+        @keyframes rainbow_animation {
+            0%,100% {
+                background-position: 0 0;
+            }
+
+            50% {
+                background-position: 100% 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="d-day-wrapper">
+        <h2 id="h2-target-date"></h2>
+        <h1 id="h1-d-day"></h1>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script>
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split('&');
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=');
+                if (decodeURIComponent(pair[0]) == variable) {
+                    return decodeURIComponent(pair[1]);
+                }
+            }
+            return null;
+        }
+
+        const date = dayjs(getQueryVariable("date"), "yyyymmdd").startOf("day");
+
+
+        document.querySelector("#h2-target-date").innerText = date.format("YYYY/MM/DD");;
+
+
+        const $wrapper = document.querySelector(".d-day-wrapper");
+        const $text = document.querySelector("#h1-d-day");
+        function animate() {
+            let targetDate = date.clone();
+            const today = dayjs();
+
+            if(targetDate.isBefore(today)) {
+                $text.innerText = "살육의 시간이다...";
+                $wrapper.classList.add("on-day");
+                return;
+            }
+
+            const remainDay = targetDate.diff(today, "day");
+            targetDate = targetDate.subtract(remainDay, "day");
+
+            const remainHour = targetDate.diff(today, "hour");
+            targetDate = targetDate.subtract(remainHour, "hour");
+
+            
+            const remainMin = targetDate.diff(today, "minute");
+            targetDate = targetDate.subtract(remainMin, "minute");
+            
+            const remainSec = targetDate.diff(today, "second");
+            targetDate = targetDate.subtract(remainSec, "second");
+
+            $text.innerText = `D-${remainDay}일 ${remainHour}시 ${remainMin}분 ${remainSec}초`; 
+            
+            window.requestAnimationFrame(animate);
+        }
+        animate();
+
+
+        let clickCount = 0;
+        $wrapper.addEventListener("click", function() {
+            clickCount += 1;
+            if(clickCount > 5) {
+                console.log("EASTER EGG")
+            }
+        })
+    </script>
+</body>
+</html>
